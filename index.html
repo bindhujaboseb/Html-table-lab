@@ -1,0 +1,447 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emirates Table Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: desert-dusk skyline banner → 3-step Notepad routine → task tracker (a real table row) → task + self-check on the left, expected Chrome output on the right.
+   Deliberately a single bright classroom look (projected on lab screens), so every colour is set explicitly. */
+:root {
+  color-scheme: light;
+  --bg: #F1F6F5;
+  --paper: #FFFFFF;
+  --ink: #102229;
+  --muted: #55676C;
+  --line: #D5E1DE;
+  --night: #0C3A45;
+  --dusk: #12596A;
+  --sand: #F4DFB4;
+  --dune: #E5BD7A;
+  --sun: #F5A623;
+  --t1: #138A9E;  --t1-soft: #DDF2F5;
+  --t2: #E2574C;  --t2-soft: #FCE4E1;
+  --t3: #D98A0B;  --t3-soft: #FCEFD6;
+  --t4: #1E9A5F;  --t4-soft: #DBF3E6;
+  --code-bg: #10212A; --code-fg: #DCE8E5; --code-dim: #6E8790; --code-new: #FFC857;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-code: "JetBrains Mono", Consolas, "Courier New", monospace;
+  --tc: var(--t1); --tc-soft: var(--t1-soft);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+.wrap > * { min-width: 0; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 0 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+code, kbd { font-family: var(--font-code); font-size: .88em; background: var(--tc-soft); color: var(--ink); padding: 1px 6px; border-radius: 5px; }
+
+/* ---------- hero ---------- */
+.hero { position: relative; overflow: hidden; border-radius: 0 0 26px 26px; background: linear-gradient(180deg, var(--night) 0%, var(--dusk) 70%, #2C7C82 100%); color: #FFFFFF; margin-inline: -20px; padding: 26px 32px 120px; }
+@media (min-width: 1280px) { .hero { margin-inline: 0; } }
+.hero-inner { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 18px 28px; }
+.eyebrow { font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--sand); }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(34px, 6vw, 60px); line-height: .98; margin: 6px 0 8px; letter-spacing: -.01em; text-wrap: balance; }
+h1 .tag { font-family: var(--font-code); font-weight: 600; font-size: .42em; color: var(--night); background: var(--sun); padding: 4px 10px; border-radius: 8px; vertical-align: middle; position: relative; top: -.15em; white-space: nowrap; }
+.lede { margin: 0; color: #CFE6E6; font-size: 17px; max-width: 46ch; }
+.hero-side { display: grid; gap: 10px; justify-items: end; }
+.stars { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 6px 14px 6px 10px; font-weight: 700; }
+.stars svg { width: 24px; height: 24px; }
+.stars svg path { fill: rgba(255,255,255,.25); transition: fill .3s; }
+.stars svg.on path { fill: var(--sun); }
+.stars .count { font-family: var(--font-code); font-size: 14px; margin-left: 4px; }
+.student { display: flex; gap: 8px; align-items: center; }
+.student label { font-size: 13px; color: var(--sand); font-weight: 700; }
+.student input { font: inherit; font-size: 15px; padding: 9px 14px; border: 2px solid rgba(255,255,255,.35); border-radius: 12px; background: rgba(255,255,255,.95); color: var(--ink); width: 220px; max-width: 100%; }
+.student input:focus-visible { outline: 3px solid var(--sun); outline-offset: 1px; }
+.skyline { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 150px; z-index: 1; }
+@media (max-width: 640px) { .hero { padding: 20px 20px 96px; } .hero-side { justify-items: start; } .skyline { height: 110px; } }
+
+/* ---------- routine ---------- */
+.routine { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: -54px; position: relative; z-index: 3; }
+.routine div { background: var(--paper); border-radius: 16px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; box-shadow: 0 6px 18px rgba(12,58,69,.14); min-width: 0; }
+.routine .n { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 18px; color: #FFFFFF; }
+.routine div:nth-child(1) .n { background: var(--t1); }
+.routine div:nth-child(2) .n { background: var(--t2); }
+.routine div:nth-child(3) .n { background: var(--t4); }
+.routine b { display: block; font-size: 15px; }
+.routine span.s { font-size: 13.5px; color: var(--muted); }
+.routine kbd { background: #FFF4DA; border: 1px solid var(--t3); border-bottom-width: 3px; font-weight: 600; padding: 0 6px; }
+@media (max-width: 760px) { .routine { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- tracker (a real table row) ---------- */
+.track-wrap { overflow-x: auto; padding-bottom: 4px; }
+table.track { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 8px 0; margin-inline: -8px; }
+.track caption { text-align: left; font-family: var(--font-code); font-size: 12.5px; color: var(--muted); padding: 0 8px 8px; }
+.track td { padding: 0; width: 20%; border-radius: 14px; background: var(--paper); border: 2px solid var(--line); transition: transform .2s, background .3s; }
+.track button { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; cursor: pointer; border-radius: 12px; }
+.track button:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.track .dot { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; color: #FFFFFF; background: var(--c); }
+.track .txt { display: grid; min-width: 0; }
+.track .num { font-family: var(--font-code); font-size: 11.5px; color: var(--muted); }
+.track .name { font-weight: 700; font-size: 14.5px; line-height: 1.2; }
+.track td.done { background: var(--c-soft); border-color: var(--c); }
+.track td.done .dot::after { content: "✓"; }
+.track td.done .dot span { display: none; }
+.track td.current { border-color: var(--c); box-shadow: 0 0 0 3px var(--c-soft); }
+.track td.viewing { transform: translateY(-3px); box-shadow: 0 8px 0 -3px var(--c), 0 0 0 3px var(--c-soft); }
+.track td.locked { opacity: .5; }
+.track td.locked button { cursor: not-allowed; }
+.track td.locked .dot { background: var(--line); color: var(--muted); }
+
+/* ---------- main ---------- */
+.main { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+.task { background: var(--paper); border-radius: 22px; overflow: hidden; box-shadow: 0 2px 0 var(--line); border: 2px solid var(--line); }
+.task-top { background: var(--tc); color: #FFFFFF; padding: 18px 22px; display: flex; gap: 16px; align-items: center; position: relative; overflow: hidden; }
+.task-top::after { content: ""; position: absolute; right: -30px; top: -30px; width: 150px; height: 150px; border-radius: 50%; border: 22px solid rgba(255,255,255,.14); }
+.bignum { font-family: var(--font-display); font-weight: 800; font-size: 56px; line-height: .8; opacity: .95; }
+.task-top .lbl { font-family: var(--font-code); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+.task-top h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(22px, 2.6vw, 28px); margin: 2px 0 0; line-height: 1.1; text-wrap: balance; }
+.task-body { padding: 18px 22px 20px; }
+.task-body p { margin: 0; max-width: 62ch; }
+.task-body ul { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 4px; }
+details.hint { margin-top: 16px; border-radius: 14px; background: var(--tc-soft); padding: 10px 14px; }
+details.hint summary { cursor: pointer; font-weight: 700; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 8px; }
+details.hint summary::-webkit-details-marker { display: none; }
+details.hint summary::before { content: "+"; width: 22px; height: 22px; border-radius: 50%; background: var(--tc); color: #FFFFFF; display: grid; place-items: center; font-weight: 800; flex: none; }
+details.hint[open] summary::before { content: "–"; }
+.codebox { background: var(--code-bg); color: var(--code-fg); border-radius: 12px; overflow: hidden; margin-top: 10px; }
+.codebox .bar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 10px; padding: 7px 14px; font-family: var(--font-code); font-size: 12px; color: var(--code-dim); border-bottom: 1px solid rgba(255,255,255,.08); }
+.codebox .bar i { font-style: normal; color: var(--code-new); }
+.codebox pre { margin: 0; padding: 12px 16px; font-family: var(--font-code); font-size: 14px; line-height: 1.6; overflow-x: auto; }
+.codebox .new { color: var(--code-new); font-weight: 600; }
+.codebox .old { color: var(--code-dim); }
+
+.check { background: var(--paper); border-radius: 22px; border: 2px solid var(--line); padding: 18px 22px; }
+.check h3 { font-family: var(--font-display); font-weight: 800; font-size: 20px; margin: 0 0 10px; }
+.checklist { display: grid; gap: 8px; }
+.checklist label { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); transition: background .2s, border-color .2s; }
+.checklist label:hover { border-color: var(--tc); }
+.checklist input { appearance: none; -webkit-appearance: none; flex: none; width: 26px; height: 26px; border-radius: 8px; border: 2.5px solid var(--tc); background: var(--paper); display: grid; place-items: center; margin: 0; cursor: pointer; }
+.checklist input::after { content: ""; width: 7px; height: 13px; border: solid #FFFFFF; border-width: 0 3px 3px 0; transform: rotate(45deg) scale(0); margin-top: -3px; transition: transform .15s; }
+.checklist input:checked { background: var(--tc); }
+.checklist input:checked::after { transform: rotate(45deg) scale(1); }
+.checklist input:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.checklist label:has(input:checked) { background: var(--tc-soft); border-color: var(--tc); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
+.btn { font: inherit; font-weight: 700; font-size: 16px; border-radius: 14px; padding: 12px 22px; cursor: pointer; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); }
+.btn:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.btn.primary { background: var(--tc); border-color: var(--tc); color: #FFFFFF; box-shadow: 0 4px 0 rgba(16,34,41,.25); }
+.btn.primary:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(16,34,41,.25); }
+.btn.ghost { border-color: var(--line); color: var(--muted); font-weight: 400; font-size: 15px; }
+.btn:disabled { background: var(--line); border-color: var(--line); color: var(--muted); box-shadow: none; cursor: not-allowed; }
+.note { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+.note.warn { color: var(--t2); font-weight: 700; }
+.confirm { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--t2-soft); border: 2px solid var(--t2); border-radius: 16px; padding: 12px 16px; }
+
+/* ---------- expected output ---------- */
+.device { background: var(--night); border-radius: 22px; padding: 10px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); box-shadow: 0 10px 24px rgba(12,58,69,.18); }
+@media (max-width: 900px) { .device { position: static; } }
+.device .label { color: #FFFFFF; padding: 6px 8px 10px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.device .label .pill { font-family: var(--font-code); font-size: 12px; font-weight: 600; background: var(--sun); color: var(--night); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.screen { border-radius: 14px; overflow: hidden; background: #FFFFFF; }
+.chrome { background: #E4ECEA; padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+.dots i:nth-child(1) { background: #EE6A5F; } .dots i:nth-child(2) { background: #F5BE4F; } .dots i:nth-child(3) { background: #62C554; }
+.url { flex: 1; min-width: 0; background: #FFFFFF; border-radius: 999px; padding: 4px 14px; font-family: var(--font-code); font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+iframe#preview { display: block; width: 100%; height: 370px; border: 0; background: #FFFFFF; }
+.device .tip { color: #CFE6E6; font-size: 14px; padding: 10px 8px 4px; display: flex; gap: 8px; }
+.device .tip b { color: var(--sun); }
+
+/* ---------- finish ---------- */
+.medal { background: linear-gradient(160deg, var(--night), var(--dusk)); color: #FFFFFF; border-radius: 22px; padding: 26px 24px; display: grid; gap: 12px; justify-items: start; position: relative; overflow: hidden; }
+.medal .ring { width: 96px; height: 96px; border-radius: 50%; background: var(--sun); display: grid; place-items: center; box-shadow: 0 0 0 8px rgba(245,166,35,.25); }
+.medal .ring svg { width: 52px; height: 52px; }
+.medal h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 4vw, 40px); margin: 0; line-height: 1; }
+.medal p { margin: 0; color: #CFE6E6; max-width: 52ch; }
+.medal .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.medal .chip { font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; color: #FFFFFF; }
+.toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%); background: var(--ink); color: #FFFFFF; padding: 12px 20px; border-radius: 999px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,.25); z-index: 20; display: flex; gap: 8px; align-items: center; }
+.toast b { color: var(--sun); }
+canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
+.foot { font-size: 13px; color: var(--muted); text-align: center; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pop { animation: pop .4s cubic-bezier(.2,.9,.3,1.3); }
+  @keyframes pop { from { transform: translateY(8px) scale(.98); opacity: .6; } to { transform: none; opacity: 1; } }
+  .btn.primary.ready { animation: nudge 1.6s ease-in-out infinite; }
+  @keyframes nudge { 0%, 100% { box-shadow: 0 4px 0 rgba(16,34,41,.25), 0 0 0 0 var(--tc-soft); } 50% { box-shadow: 0 4px 0 rgba(16,34,41,.25), 0 0 0 8px var(--tc-soft); } }
+  .toast { animation: toastIn .35s ease-out; }
+  @keyframes toastIn { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow">Grade VIII · Work Education · Computer Lab</div>
+        <h1>Emirates Table Lab <span class="tag">&lt;table&gt;</span></h1>
+        <p class="lede">Build a real web page table about the UAE in four tasks. Type in Notepad, check in Chrome, collect your stars.</p>
+      </div>
+      <div class="hero-side">
+        <div class="stars" id="stars" aria-label="Stars collected"></div>
+        <div class="student">
+          <label for="sname">Your name</label>
+          <input id="sname" type="text" placeholder="Type your name" autocomplete="off">
+        </div>
+      </div>
+    </div>
+    <svg class="skyline" viewBox="0 0 1200 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <circle cx="960" cy="70" r="34" fill="#F5A623" opacity=".9"/>
+      <path d="M0 150 L0 104 L90 70 L150 88 L230 52 L300 84 L360 74 L420 98 L420 150 Z" fill="#0F4A57"/>
+      <g fill="#0A3440">
+        <rect x="470" y="96" width="26" height="54"/><rect x="500" y="84" width="20" height="66"/><rect x="524" y="104" width="30" height="46"/>
+        <path d="M600 150 V118 H612 V96 H620 V70 H626 V38 H630 V6 H632 V38 H636 V70 H642 V96 H650 V118 H662 V150 Z"/>
+        <rect x="676" y="92" width="22" height="58"/><rect x="702" y="106" width="34" height="44"/><rect x="740" y="88" width="18" height="62"/>
+        <rect x="806" y="60" width="5" height="90"/><rect x="926" y="60" width="5" height="90"/>
+        <path d="M818 150 V112 H920 V150 Z"/>
+        <path d="M838 112 a31 31 0 0 1 62 0 Z"/><path d="M822 116 a12 12 0 0 1 24 0 Z"/><path d="M892 116 a12 12 0 0 1 24 0 Z"/>
+        <path d="M1010 150 V112 H1020 V104 H1032 V112 H1060 V104 H1072 V112 H1082 V150 Z"/>
+      </g>
+      <path d="M0 150 C120 128 240 126 380 138 C520 150 640 124 800 132 C960 140 1080 122 1200 130 L1200 150 Z" fill="#E5BD7A"/>
+      <path d="M0 150 C160 140 320 146 480 142 C700 136 900 148 1200 142 L1200 150 Z" fill="#F4DFB4"/>
+    </svg>
+  </header>
+
+  <div class="routine" aria-label="How to work">
+    <div><span class="n">1</span><span><b>Type in Notepad</b><span class="s">Open <code>UAE_Emirates_Table_Starter.html</code></span></span></div>
+    <div><span class="n">2</span><span><b>Save</b><span class="s">Press <kbd>Ctrl</kbd> + <kbd>S</kbd></span></span></div>
+    <div><span class="n">3</span><span><b>Refresh Chrome</b><span class="s">Press <kbd>F5</kbd> and compare with the picture</span></span></div>
+  </div>
+
+  <div class="track-wrap">
+    <table class="track" aria-label="Task progress">
+      <caption>&lt;tr&gt; your progress &lt;/tr&gt; · finish a task to unlock the next cell</caption>
+      <tr id="trackRow"></tr>
+    </table>
+  </div>
+
+  <div class="main">
+    <section class="col">
+      <div id="taskCard"></div>
+      <div id="checkCard"></div>
+      <div class="confirm" id="confirmBox" hidden>
+        <span>This clears your ticks and stars on this computer. Are you sure?</span>
+        <button class="btn" id="confirmYes" type="button">Yes, start again</button>
+        <button class="btn ghost" id="confirmNo" type="button">Cancel</button>
+      </div>
+    </section>
+
+    <aside class="col">
+      <div class="device">
+        <div class="label"><span class="pill" id="previewPill">TASK 1</span><span id="previewLabel">Your page should look like this</span></div>
+        <div class="screen">
+          <div class="chrome">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <div class="url">file:///Desktop/UAE_Emirates_Table_Starter.html</div>
+          </div>
+          <iframe id="preview" title="Expected output in Google Chrome" sandbox=""></iframe>
+        </div>
+        <div class="tip"><b>Look for:</b> <span id="previewNote"></span></div>
+      </div>
+    </aside>
+  </div>
+
+  <p class="foot">Sharjah Indian School, Juwaiza · Department of Computer Science · Creating Tables in HTML</p>
+</div>
+<div class="toast" id="toast" hidden></div>
+<canvas id="confetti" hidden></canvas>
+
+<script>
+(function () {
+  var DATA = [
+    ['Abu Dhabi', 'Sheikh Zayed Grand Mosque'],
+    ['Dubai', 'Burj Khalifa'],
+    ['Sharjah', 'Al Noor Island'],
+    ['Ras Al Khaimah', 'Jebel Jais']
+  ];
+  var COLORS = [['--t1', '--t1-soft'], ['--t2', '--t2-soft'], ['--t3', '--t3-soft'], ['--t4', '--t4-soft']];
+  var STAR = '<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>';
+  var esc = function (s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+
+  function codeFor(n) {
+    var L = [];
+    L.push([n >= 3 ? '<table border="1" cellpadding="8">' : '<table border="1">', n === 0 || n === 3 ? 'new' : 'old']);
+    L.push(['  <caption>Emirates of the UAE</caption>', n === 0 ? 'new' : 'old']);
+    if (n >= 1) {
+      L.push([n >= 3 ? '  <tr bgcolor="lightgreen">' : '  <tr>', n === 1 || n === 3 ? 'new' : 'old']);
+      L.push(['    <th>Emirate</th>', n === 1 ? 'new' : 'old']);
+      L.push(['    <th>Famous Landmark</th>', n === 1 ? 'new' : 'old']);
+      L.push(['  </tr>', n === 1 ? 'new' : 'old']);
+    }
+    if (n >= 2) DATA.forEach(function (d) {
+      var k = n === 2 ? 'new' : 'old';
+      L.push(['  <tr>', k]); L.push(['    <td>' + d[0] + '</td>', k]); L.push(['    <td>' + d[1] + '</td>', k]); L.push(['  </tr>', k]);
+    });
+    L.push(['</table>', n === 0 ? 'new' : 'old']);
+    return L;
+  }
+  function htmlFor(n) { return codeFor(n).map(function (l) { return l[0]; }).join('\n'); }
+
+  var TASKS = [
+    { name: 'Make the table', title: 'Create the table and its caption',
+      body: '<p>Below the heading in your starter file, start a table with a border so you can see the grid lines. Give it a title using <code>&lt;caption&gt;</code>.</p>',
+      checks: ['I typed <code>&lt;table border="1"&gt;</code> and closed it with <code>&lt;/table&gt;</code>.', 'My caption says <strong>Emirates of the UAE</strong>.', 'I saved in Notepad and refreshed Chrome. The caption shows on my page.'],
+      note: 'An empty table has no cells yet, so you only see the caption. That is correct!' },
+    { name: 'Header row', title: 'Add the header row',
+      body: '<p>Inside the table, after the caption, add one row of <strong>header cells</strong>. Use <code>&lt;tr&gt;</code> for the row and <code>&lt;th&gt;</code> for each header cell. The text appears bold and centred.</p>',
+      checks: ['My row starts with <code>&lt;tr&gt;</code> and ends with <code>&lt;/tr&gt;</code>.', 'I have two <code>&lt;th&gt;</code> cells: <strong>Emirate</strong> and <strong>Famous Landmark</strong>.', 'In Chrome the two headings are bold and inside boxes.'],
+      note: 'Two bold, centred headings, each inside its own box.' },
+    { name: 'Data rows', title: 'Add four data rows',
+      body: '<p>Below the header row, add <strong>four rows</strong>, one for each Emirate. Use <code>&lt;td&gt;</code> for data cells. Each row has two cells.</p>',
+      checks: ['I added four rows, each with <code>&lt;tr&gt;</code> … <code>&lt;/tr&gt;</code>.', 'Every <code>&lt;td&gt;</code> has a closing <code>&lt;/td&gt;</code>.', 'All four Emirates and landmarks show in Chrome, each in its own box.'],
+      note: 'Data cells are normal text, lined up on the left.' },
+    { name: 'Format it', title: 'Add space and colour',
+      body: '<p>Make your table easier to read by changing two tags:</p><ul><li>Add <code>cellpadding="8"</code> to the <code>&lt;table&gt;</code> tag for space inside every cell.</li><li>Add <code>bgcolor="lightgreen"</code> to the header row\'s <code>&lt;tr&gt;</code> tag.</li></ul>',
+      checks: ['My <code>&lt;table&gt;</code> tag has <code>cellpadding="8"</code>.', 'My header row <code>&lt;tr&gt;</code> has <code>bgcolor="lightgreen"</code>.', 'In Chrome the cells have more space and the header row is light green.'],
+      note: 'Bigger cells (cellpadding) and a light-green header row.' }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var root = document.documentElement;
+  var state = { step: 0, view: 0, passed: [false, false, false, false], ticks: {}, name: '' };
+  try { var s = JSON.parse(localStorage.getItem('emiratesTableGuide') || 'null'); if (s && s.passed) state = Object.assign(state, s); } catch (e) {}
+  function save() { try { localStorage.setItem('emiratesTableGuide', JSON.stringify(state)); } catch (e) {} }
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setTheme(i) {
+    var c = COLORS[Math.min(i, 3)];
+    root.style.setProperty('--tc', 'var(' + c[0] + ')');
+    root.style.setProperty('--tc-soft', 'var(' + c[1] + ')');
+  }
+
+  function renderStars() {
+    var n = state.passed.filter(Boolean).length;
+    $('stars').innerHTML = state.passed.map(function (p) { return '<svg viewBox="0 0 24 24" class="' + (p ? 'on' : '') + '">' + STAR + '</svg>'; }).join('') +
+      '<span class="count">' + n + '/4</span>';
+  }
+
+  function renderTrack() {
+    var cells = TASKS.map(function (t, i) {
+      var cls = state.passed[i] ? 'done' : (i === state.step ? 'current' : 'locked');
+      if (i === state.view) cls += ' viewing';
+      return '<td class="' + cls + '" style="--c:var(' + COLORS[i][0] + ');--c-soft:var(' + COLORS[i][1] + ')"><button type="button" data-i="' + i + '">' +
+        '<span class="dot"><span>' + (i + 1) + '</span></span><span class="txt"><span class="num">Task ' + (i + 1) + '</span><span class="name">' + t.name + '</span></span></button></td>';
+    });
+    var all = state.passed.every(Boolean);
+    cells.push('<td class="' + (all ? 'done' : 'locked') + (state.view === 4 ? ' viewing' : '') + '" style="--c:var(--sun);--c-soft:var(--t3-soft)"><button type="button" data-i="4">' +
+      '<span class="dot"><span>★</span></span><span class="txt"><span class="num">Finish</span><span class="name">Your badge</span></span></button></td>');
+    $('trackRow').innerHTML = cells.join('');
+  }
+
+  function setPreview(n, pill, label, note) {
+    $('preview').srcdoc = '<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:"Times New Roman",serif;margin:16px;color:#000;background:#fff}</style></head><body>' +
+      '<h2 align="center">Emirates of the UAE</h2>' + htmlFor(n) + '</body></html>';
+    $('previewPill').textContent = pill; $('previewLabel').textContent = label; $('previewNote').textContent = note;
+  }
+
+  function popIn(el) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+
+  function renderTask() {
+    var card = $('taskCard'), check = $('checkCard');
+    setTheme(state.view);
+    if (state.view === 4) { renderFinish(card, check); return; }
+    var i = state.view, t = TASKS[i];
+    var lines = codeFor(i).map(function (l) { return '<span class="' + l[1] + '">' + esc(l[0]) + '</span>'; }).join('\n');
+    card.innerHTML = '<article class="task"><div class="task-top"><span class="bignum">' + (i + 1) + '</span><div><div class="lbl">Task ' + (i + 1) + ' of 4</div><h2>' + t.title + '</h2></div></div>' +
+      '<div class="task-body">' + t.body +
+      '<details class="hint"><summary>Stuck? Show the code</summary><div class="codebox"><div class="bar"><span>Notepad · your table so far</span><span><i>yellow</i> = type this now</span></div><pre>' + lines + '</pre></div></details></div></article>';
+    check.innerHTML = '<div class="check"><h3>Check your own work</h3><div class="checklist">' +
+      t.checks.map(function (c, k) {
+        var id = 'c' + i + '_' + k, on = state.ticks[id] || state.passed[i];
+        return '<label for="' + id + '"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><span>' + c + '</span></label>';
+      }).join('') + '</div>' +
+      '<div class="actions"><button class="btn primary" id="doneBtn" type="button"></button><button class="btn ghost" id="resetBtn" type="button">Start again</button></div>' +
+      '<p class="note" id="doneMsg"></p></div>';
+    popIn(card);
+    $('doneBtn').textContent = i === 3 ? 'Done! Get my badge →' : 'Done! Next task →';
+    updateDone();
+    check.querySelectorAll('input').forEach(function (b) { b.addEventListener('change', function () { state.ticks[b.id] = b.checked; save(); updateDone(); }); });
+    $('doneBtn').onclick = function () {
+      var first = !state.passed[i];
+      state.passed[i] = true;
+      if (state.step === i) state.step = i + 1;
+      state.view = i + 1; save(); renderAll();
+      if (first) toast('Task ' + (i + 1) + ' complete! <b>+1 ★</b>');
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    };
+    $('resetBtn').onclick = function () { $('confirmBox').hidden = false; };
+    setPreview(i, 'TASK ' + (i + 1), 'Your page should look like this', t.note);
+  }
+
+  function updateDone() {
+    var boxes = $('checkCard').querySelectorAll('input'), all = Array.prototype.every.call(boxes, function (b) { return b.checked; });
+    var btn = $('doneBtn'), msg = $('doneMsg');
+    btn.disabled = !all; btn.classList.toggle('ready', all);
+    msg.className = 'note';
+    var left = Array.prototype.filter.call(boxes, function (b) { return !b.checked; }).length;
+    msg.textContent = all ? 'Your page matches the picture. Move on when you are ready.' : 'Tick ' + left + ' more box' + (left === 1 ? '' : 'es') + ' to unlock the next task.';
+  }
+
+  function renderFinish(card, check) {
+    var nm = state.name ? esc(state.name) : 'Table Builder';
+    card.innerHTML = '<div class="medal"><div class="ring"><svg viewBox="0 0 24 24"><path fill="#0C3A45" d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg></div>' +
+      '<div class="eyebrow">Badge earned</div><h2>' + nm + ',<br>you are a Table Builder!</h2>' +
+      '<p>You built a complete HTML table in Notepad with a caption, a header row, four data rows, cellpadding and a coloured header row. Show your teacher your page in Chrome.</p>' +
+      '<div class="row">' + TASKS.map(function (t, i) { return '<span class="chip" style="background:var(' + COLORS[i][0] + ')">★ ' + t.name + '</span>'; }).join('') + '</div></div>';
+    check.innerHTML = '<div class="check"><h3>Finished early?</h3><div class="checklist">' +
+      ['Swap computers with a partner and compare their page with the picture.', 'Help them find any missing closing tags: <code>&lt;/td&gt;</code>, <code>&lt;/tr&gt;</code> or <code>&lt;/table&gt;</code>.', 'Try Activity Sheet 3: add a "Capital City" column and a title row with <code>colspan="3"</code>.']
+        .map(function (s, k) { return '<label for="f' + k + '"><input type="checkbox" id="f' + k + '"><span>' + s + '</span></label>'; }).join('') +
+      '</div><div class="actions"><button class="btn ghost" id="backBtn" type="button">Back to Task 4</button><button class="btn ghost" id="resetBtn" type="button">Start again</button></div></div>';
+    popIn(card);
+    $('backBtn').onclick = function () { state.view = 3; save(); renderAll(); };
+    $('resetBtn').onclick = function () { $('confirmBox').hidden = false; };
+    setPreview(3, 'FINISHED', 'Your finished page', 'your page in Chrome should match this.');
+    confetti();
+  }
+
+  function renderAll() { renderStars(); renderTrack(); renderTask(); }
+
+  var toastTimer;
+  function toast(html) {
+    var t = $('toast'); t.innerHTML = html; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 2200);
+  }
+
+  function confetti() {
+    if (reduce) return;
+    var c = $('confetti'), ctx = c.getContext('2d'); c.hidden = false;
+    var W = c.width = innerWidth, H = c.height = innerHeight;
+    var cols = ['#138A9E', '#E2574C', '#D98A0B', '#1E9A5F', '#F5A623'];
+    var P = Array.from({ length: 140 }, function () {
+      return { x: Math.random() * W, y: -20 - Math.random() * H * .5, vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 3.5, r: 4 + Math.random() * 5, a: Math.random() * 6, va: (Math.random() - .5) * .3, col: cols[(Math.random() * cols.length) | 0] };
+    });
+    var start = performance.now();
+    (function frame(now) {
+      ctx.clearRect(0, 0, W, H);
+      P.forEach(function (p) {
+        p.x += p.vx; p.y += p.vy; p.a += p.va;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.col; ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); ctx.restore();
+      });
+      if (now - start < 3200) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, W, H); c.hidden = true; }
+    })(start);
+  }
+
+  $('trackRow').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var i = +b.dataset.i;
+    var ok = i === 4 ? state.passed.every(Boolean) : (state.passed[i] || i === state.step);
+    if (!ok) { toast('That task is locked. Finish <b>Task ' + (state.step + 1) + '</b> first.'); return; }
+    state.view = i; save(); renderAll();
+  });
+  $('sname').value = state.name || '';
+  $('sname').addEventListener('input', function (e) { state.name = e.target.value; save(); });
+  $('confirmNo').onclick = function () { $('confirmBox').hidden = true; };
+  $('confirmYes').onclick = function () {
+    state = { step: 0, view: 0, passed: [false, false, false, false], ticks: {}, name: state.name };
+    $('confirmBox').hidden = true; save(); renderAll();
+  };
+  renderAll();
+})();
+</script>
+</body></html>
